@@ -2,7 +2,7 @@ package io.github.easyretrofit.spring.boot.web;
 
 import io.github.easyretrofit.adapter.simplebody.ErrorParameter;
 
-public interface BodyCallAdapterErrorHandler {
+public interface BodyCallAdapterErrorHandler<T> {
 
-    void handleError(ErrorParameter errorParameter);
+    T handleError(ErrorParameter errorParameter);
 }

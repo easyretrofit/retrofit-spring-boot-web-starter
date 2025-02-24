@@ -17,8 +17,7 @@ public class BodyCallAdapterFactoryBuilder extends BaseCallAdapterFactoryBuilder
     public CallAdapter.Factory buildCallAdapterFactory() {
         return SimpleBodyCallAdapterFactory.create(errorParameter -> {
             if (errorHandler != null) {
-                errorHandler.handleError(errorParameter);
-                return null;
+                return errorHandler.handleError(errorParameter);
             }
             throw new EasyRetrofitBodyCallAdapterException(errorParameter);
         });
