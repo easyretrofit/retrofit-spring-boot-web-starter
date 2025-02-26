@@ -89,12 +89,6 @@
 
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>
-            <artifactId>converter-moshi</artifactId>
-            <version>${retrofit.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.squareup.retrofit2</groupId>
             <artifactId>converter-jaxb</artifactId>
             <version>${retrofit.version}</version>
         </dependency>
@@ -148,6 +142,7 @@
         </dependency>
 
     </dependencies>
+
 
     <build>
         <plugins>

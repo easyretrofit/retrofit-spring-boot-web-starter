@@ -79,17 +79,17 @@ public final class AnyConverters {
     }
 
     @Retention(RUNTIME)
-    @interface Json {
+    public @interface Json {
         JsonConverter value() default JsonConverter.JACKSON;
     }
 
     @Retention(RUNTIME)
-    @interface Xml {
+    public @interface Xml {
         XmlConverter value() default XmlConverter.JAXB;
     }
 
     @Retention(RUNTIME)
-    @interface Protocol {
+    public @interface Protocol {
         ProtocolConverter value() default ProtocolConverter.PROTOBUF;
     }
 

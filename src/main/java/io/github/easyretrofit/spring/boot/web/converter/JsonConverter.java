@@ -4,7 +4,5 @@ public enum JsonConverter {
 
     GSON,
 
-    JACKSON,
-
-    MOSHI;
+    JACKSON;
 }
