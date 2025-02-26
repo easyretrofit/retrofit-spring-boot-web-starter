@@ -10,7 +10,7 @@ import retrofit2.CallAdapter;
 @Component
 public class BodyCallAdapterFactoryBuilder extends BaseCallAdapterFactoryBuilder {
 
-    @Autowired
+    @Autowired(required = false)
     private BodyCallAdapterErrorHandler errorHandler;
 
     @Override

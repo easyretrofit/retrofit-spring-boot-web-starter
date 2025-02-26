@@ -25,13 +25,14 @@ public class WebRetrofitBuilderExtension implements RetrofitBuilderExtension {
             add(BodyCallAdapterFactoryBuilder.class);
             add(GuavaCallAdapterFactoryBuilder.class);
             add(Rxjava3CallAdapterFactoryBuilder.class);
+            add(ReactorCallAdapterFactoryBuilder.class);
         }}.toArray(new Class[0]);
     }
 
     @Override
     public Class<? extends BaseConverterFactoryBuilder>[] globalConverterFactoryBuilderClazz() {
         return new ArrayList<Class<? extends BaseConverterFactoryBuilder>>() {{
-            add(JacksonConvertFactoryBuilder.class);
+            add(AnyConverterFactoryBuilder.class);
             add(BodyBaseTypeConvertFactoryBuilder.class);
         }}.toArray(new Class[0]);
     }
