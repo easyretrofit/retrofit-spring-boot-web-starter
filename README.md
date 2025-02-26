@@ -43,11 +43,74 @@ Support Converter:
 
 - [x] Jackson
 - [x] Gson
-- [x] Moshi
 - [x] Jaxb
 - [x] PROTOBUF
 - [x] WIRE
 
+## multiple API merge support
+Rxjava3: return MyBean
 
+```java
+Flowable<ResponseResult<List<String>>> flowable1 = productApi.rxjava3Products().onErrorReturn(throwable -> {
+    return ResponseResult.failure(500, "Error occurred");
+});
+Flowable<ResponseResult<List<Integer>>> flowable2 = productApi.rxjava3ProductsInt();
+// 合并多个 Flowable
+Flowable<MyBean> mergedFlowable = Flowable.zip(flowable1, flowable2, (result1, result2) -> {
+    List<String> strings = result1.getData();
+    List<Integer> integers = result2.getData();
+
+    // 创建 MyBean 对象
+    return new MyBean(strings, integers);
+});
+return mergedFlowable.blockingFirst();
+```
+
+Java: return MyBean
+```java
+CompletableFuture<ResponseResult<List<String>>> future = productApi.productsAsync();
+CompletableFuture<ResponseResult<List<Integer>>> future2 = productApi.productsAsyncInt();
+CompletableFuture<Void> allFutures = CompletableFuture.allOf(future, future2);
+CompletableFuture<MyBean> resultFuture = allFutures.thenApply(v -> {
+    try {
+        List<String> listResponseResult = future.get().getData();
+        List<Integer> listResponseResult1 = future2.get().getData();
+
+        return new MyBean(listResponseResult, listResponseResult1);
+    } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException(e);
+    }
+});
+return resultFuture.get();
+```
+
+guava: return MyBean
+```java
+ListenableFuture<ResponseResult<List<String>>> flowable1 = productApi.productGuava();
+ListenableFuture<ResponseResult<List<Integer>>> flowable2 = productApi.productGuavaInt();
+// 使用 Futures.allAsList 来等待所有 ListenableFuture 完成
+// 使用 Futures.whenAllComplete 来等待所有 ListenableFuture 完成
+return Futures.whenAllComplete(flowable1, flowable2)
+.call(() -> {
+    ResponseResult<List<String>> result1 = flowable1.get();
+    ResponseResult<List<Integer>> result2 = flowable2.get();
+
+    List<String> stringList = result1.getData();
+    List<Integer> integerList = result2.getData();
+
+    return new MyBean(stringList, integerList);
+}, MoreExecutors.directExecutor()).get();
+```
+
+reactor: return Mono<List<HelloBean>>
+```java
+Mono<HelloBean> mono = helloApi.hello(message);
+Mono<HelloBean> Mono1 = helloApi.hello(message);
+
+Mono<List<HelloBean>> zip = Mono.zip(mono, Mono1, (helloBean, helloBean2) -> {
+    return List.of(helloBean, helloBean2);
+});
+return zip;
+```
 
 
