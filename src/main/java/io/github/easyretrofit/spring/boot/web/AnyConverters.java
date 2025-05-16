@@ -2,6 +2,7 @@ package io.github.easyretrofit.spring.boot.web;
 
 import io.github.easyretrofit.spring.boot.web.converter.JsonConverter;
 import io.github.easyretrofit.spring.boot.web.converter.ProtocolConverter;
+import io.github.easyretrofit.spring.boot.web.converter.TextConverter;
 import io.github.easyretrofit.spring.boot.web.converter.XmlConverter;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -51,6 +52,20 @@ public final class AnyConverters {
         }
     }
 
+    static class TextConverterBean extends ConverterBean {
+        private final TextConverter textConverter;
+
+        TextConverterBean(Class<? extends Annotation> cls, TextConverter textConverter, Converter.Factory factory) {
+            super(cls, factory);
+            this.textConverter = textConverter;
+
+        }
+
+        public TextConverter getTextConverter() {
+            return textConverter;
+        }
+    }
+
     static class XmlConverterBean extends ConverterBean {
         private final XmlConverter xmlConverter;
 
@@ -84,6 +99,11 @@ public final class AnyConverters {
     }
 
     @Retention(RUNTIME)
+    public @interface Text {
+        TextConverter value() default TextConverter.TEXT;
+    }
+
+    @Retention(RUNTIME)
     public @interface Xml {
         XmlConverter value() default XmlConverter.JAXB;
     }
@@ -97,6 +117,8 @@ public final class AnyConverters {
         private static List<JsonConverterBean> jsonFactories = new ArrayList<>();
         private static List<XmlConverterBean> xmlFactories = new ArrayList<>();
         private static List<ProtocolConverterBean> protocolFactories = new ArrayList<>();
+        private static List<TextConverterBean> txtFactories = new ArrayList<>();
+
 
         public static class Builder {
 
@@ -133,15 +155,30 @@ public final class AnyConverters {
                 return this;
             }
 
+            public Builder add(Class<? extends Annotation> cls, TextConverter textConverter, Converter.Factory factory) {
+                if (cls == null) {
+                    throw new NullPointerException("cls == null");
+                }
+                if (factory == null) {
+                    throw new NullPointerException("factory == null");
+                }
+                txtFactories.add(new TextConverterBean(cls, textConverter, factory));
+                return this;
+            }
+
             public QualifiedTypeConverterFactory build() {
-                return new QualifiedTypeConverterFactory(jsonFactories, xmlFactories, protocolFactories);
+                return new QualifiedTypeConverterFactory(jsonFactories, xmlFactories, protocolFactories, txtFactories);
             }
         }
 
-        QualifiedTypeConverterFactory(List<JsonConverterBean> jsonFactories, List<XmlConverterBean> xmlFactories, List<ProtocolConverterBean> protocolFactories) {
+        QualifiedTypeConverterFactory(List<JsonConverterBean> jsonFactories,
+                                      List<XmlConverterBean> xmlFactories,
+                                      List<ProtocolConverterBean> protocolFactories,
+                                      List<TextConverterBean> txtFactories) {
             QualifiedTypeConverterFactory.jsonFactories = jsonFactories;
             QualifiedTypeConverterFactory.xmlFactories = xmlFactories;
             QualifiedTypeConverterFactory.protocolFactories = protocolFactories;
+            QualifiedTypeConverterFactory.txtFactories = txtFactories;
         }
 
         @Override
@@ -163,6 +200,12 @@ public final class AnyConverters {
                     assert protocolFactory != null;
                     return protocolFactory.getFactory().responseBodyConverter(type, annotations, retrofit);
                 }
+
+                if (annotation instanceof Text) {
+                    TextConverterBean textFactory = txtFactories.stream().filter(textConverterBean -> textConverterBean.getTextConverter() == ((Text) annotation).value()).findFirst().orElse(null);
+                    assert textFactory != null;
+                    return textFactory.getFactory().responseBodyConverter(type, annotations, retrofit);
+                }
             }
             JsonConverterBean converterBean = jsonFactories.stream().filter(jsonConverterBean -> jsonConverterBean.getJacksonConverter() == JsonConverter.JACKSON).findFirst().orElse(null);
             assert converterBean != null;
@@ -179,7 +222,6 @@ public final class AnyConverters {
                     JsonConverterBean converterBean = jsonFactories.stream().filter(jsonConverterBean -> jsonConverterBean.getJacksonConverter() == ((Json) annotation).value()).findFirst().orElse(null);
                     assert converterBean != null;
                     return converterBean.getFactory().requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
-
                 }
                 if (annotation instanceof Xml) {
                     XmlConverterBean xmlFactory = xmlFactories.stream().filter(xmlConverterBean -> xmlConverterBean.getXmlConverter() == ((Xml) annotation).value()).findFirst().orElse(null);
@@ -190,6 +232,11 @@ public final class AnyConverters {
                     ProtocolConverterBean protocolFactory = protocolFactories.stream().filter(protocolConverterBean -> protocolConverterBean.getProtocolConverter() == ((Protocol) annotation).value()).findFirst().orElse(null);
                     assert protocolFactory != null;
                     return protocolFactory.getFactory().requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
+                }
+                if (annotation instanceof Text) {
+                    TextConverterBean textFactory = txtFactories.stream().filter(textConverterBean -> textConverterBean.getTextConverter() == ((Text) annotation).value()).findFirst().orElse(null);
+                    assert textFactory != null;
+                    return textFactory.getFactory().requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit);
                 }
             }
             JsonConverterBean converterBean = jsonFactories.stream().filter(jsonConverterBean -> jsonConverterBean.getJacksonConverter() == JsonConverter.JACKSON).findFirst().orElse(null);
