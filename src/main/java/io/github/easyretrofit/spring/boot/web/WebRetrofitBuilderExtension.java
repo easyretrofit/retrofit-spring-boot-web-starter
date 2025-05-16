@@ -33,7 +33,6 @@ public class WebRetrofitBuilderExtension implements RetrofitBuilderExtension {
     public Class<? extends BaseConverterFactoryBuilder>[] globalConverterFactoryBuilderClazz() {
         return new ArrayList<Class<? extends BaseConverterFactoryBuilder>>() {{
             add(AnyConverterFactoryBuilder.class);
-            add(BodyBaseTypeConvertFactoryBuilder.class);
         }}.toArray(new Class[0]);
     }
 

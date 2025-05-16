@@ -1,8 +1,10 @@
 package io.github.easyretrofit.spring.boot.web;
 
+import io.github.easyretrofit.converter.basetype.BaseTypeConverterFactory;
 import io.github.easyretrofit.core.builder.BaseConverterFactoryBuilder;
 import io.github.easyretrofit.spring.boot.web.converter.JsonConverter;
 import io.github.easyretrofit.spring.boot.web.converter.ProtocolConverter;
+import io.github.easyretrofit.spring.boot.web.converter.TextConverter;
 import io.github.easyretrofit.spring.boot.web.converter.XmlConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,8 @@ public class AnyConverterFactoryBuilder extends BaseConverterFactoryBuilder {
         builder.add(AnyConverters.Json.class, JsonConverter.JACKSON, JacksonConverterFactory.create())
                 .add(AnyConverters.Json.class, JsonConverter.GSON, GsonConverterFactory.create())
                 .add(AnyConverters.Protocol.class, ProtocolConverter.PROTOBUF, ProtoConverterFactory.create())
-                .add(AnyConverters.Protocol.class, ProtocolConverter.WIRE, WireConverterFactory.create());
+                .add(AnyConverters.Protocol.class, ProtocolConverter.WIRE, WireConverterFactory.create())
+                .add(AnyConverters.Text.class, TextConverter.TEXT, BaseTypeConverterFactory.create());
         try {
             Class.forName("javax.xml.bind.JAXBContext");
             builder.add(AnyConverters.Xml.class, XmlConverter.JAXB, JaxbConverterFactory.create());
