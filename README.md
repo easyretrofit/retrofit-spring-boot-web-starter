@@ -47,6 +47,36 @@ Support Converter:
 - [x] PROTOBUF
 - [x] WIRE
 
+##  Example
+
+By default, you do not need any Converter annotations and will use Json (Jackson) as the default Converter
+
+If you want to use another parser for your interface, you can use it this way,
+
+@AnyConverters.Text() // using TextConverter
+
+@AnyConverters.Protobuf() // using ProtobufConverter
+
+@AnyConverters.Protobuf(value = ProtocolConverter.PROTOBUF) // using ProtobufConverter
+
+@AnyConverters.Protobuf(value = ProtocolConverter.WIRE) // using WireConverter
+
+@AnyConverters.Xml() // using XmlConverter
+
+@AnyConverters.Json() // using JacksonConverter
+
+@AnyConverters.Json(value = JsonConverter.JACKSON) // using JacksonConverter
+
+@AnyConverters.Json(value = JsonConverter.GSON) // using GsonConverter
+
+```java
+@AnyConverters.Text()
+@Headers("Content-Type: text/plain")
+@GET("/job/{jobName}/lastBuild/buildNumber")
+Integer lastBuildNumber(@Path("jobName") String jobName);
+```
+
+
 ## multiple API merge support
 Rxjava3: return MyBean
 
