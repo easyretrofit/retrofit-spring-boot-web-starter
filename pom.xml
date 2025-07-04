@@ -10,8 +10,9 @@
         <version>2.12.0</version>
     </parent>
 
+    <name>retrofit-spring-boot-web-starter</name>
     <artifactId>retrofit-spring-boot-web-starter</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <description>support springboot-web and springboot-webflux framework</description>
 
     <url>https://github.com/easyretrofit/${project.artifactId}</url>
