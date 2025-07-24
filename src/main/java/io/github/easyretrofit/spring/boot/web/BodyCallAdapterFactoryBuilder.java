@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import retrofit2.CallAdapter;
 
+import java.io.IOException;
+
 @Component
 public class BodyCallAdapterFactoryBuilder extends BaseCallAdapterFactoryBuilder {
 
@@ -19,7 +21,11 @@ public class BodyCallAdapterFactoryBuilder extends BaseCallAdapterFactoryBuilder
             if (errorHandler != null) {
                 return errorHandler.handleError(errorParameter);
             }
-            throw new EasyRetrofitBodyCallAdapterException(errorParameter);
+            try {
+                throw new EasyRetrofitBodyCallAdapterException(errorParameter);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 }
