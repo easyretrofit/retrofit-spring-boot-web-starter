@@ -31,6 +31,29 @@ dependencies {
 ```
 
 ## Usage
+use can following:
+https://github.com/liuziyuan/easy-retrofit-demo/tree/main/retrofit-spring-boot-web-starter-sample
+support annotation:
+```text
+@AnyConverters.Json() // default jackson
+@AnyConverters.Json(JsonConverter.GSON)
+@AnyConverters.Json(JsonConverter.JACKSON)
+@AnyConverters.Text()
+@AnyConverters.Xml()
+@AnyConverters.Protocol(ProtocolConverter.PROTOBUF)
+@AnyConverters.Protocol(ProtocolConverter.WIRE)
+
+```
+```java
+    //by default, if you don't have annotation, it will use jackson converter
+    @GET("hello/{message}")
+    HelloBean hello(@Path("message") String message);
+
+
+    @AnyConverters.Json(JsonConverter.GSON)
+    @GET("hello/{message}")
+    HelloBean hello2(@Path("message") String message);
+```
 
 Support Adapter:
 
