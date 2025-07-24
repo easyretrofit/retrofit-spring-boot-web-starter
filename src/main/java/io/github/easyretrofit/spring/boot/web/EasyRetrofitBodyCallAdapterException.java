@@ -8,6 +8,6 @@ import java.io.IOException;
 public class EasyRetrofitBodyCallAdapterException extends RuntimeException {
 
     public EasyRetrofitBodyCallAdapterException(ErrorParameter errorParameter) throws IOException {
-        super("code:" + errorParameter.getCode() + " message:" + new ObjectMapper().readValue(errorParameter.getResponse().bytes(), String.class));
+        super("code:" + errorParameter.getResponse().code() + " message:" + errorParameter.getResponse().toString());
     }
 }
